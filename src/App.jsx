@@ -67,7 +67,7 @@ function Sidebar({ open, onClose }) {
         {/* Footer */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-[var(--color-border)]">
           <div className="text-xs text-[var(--color-text-dim)] text-center">
-            v0.1.0 — Phase 1
+            v0.2.0 — Phase 2+3
           </div>
         </div>
       </aside>

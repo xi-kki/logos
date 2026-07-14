@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { Copy, Check, Search } from 'lucide-react';
+import { Copy, Check, Search, BookOpen } from 'lucide-react';
 import { ALL_TEMPLATES, CATEGORIES } from '../data/prompts';
 import { copyToClipboard } from '../lib/optimizer';
+import Toast from '../components/ui/Toast';
 
 export default function TemplatesPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [search, setSearch] = useState('');
   const [copiedId, setCopiedId] = useState(null);
+  const [toast, setToast] = useState(null);
 
   const filtered = ALL_TEMPLATES.filter((t) => {
     const matchesCategory = activeCategory === 'all' || t.category === activeCategory;
@@ -21,10 +23,15 @@ export default function TemplatesPage() {
     copyToClipboard(template.template);
     setCopiedId(template.id);
     setTimeout(() => setCopiedId(null), 2000);
+    setToast({ message: `Copied "${template.name}" template`, type: 'success', id: Date.now() });
   };
 
   return (
     <div className="p-6 lg:p-8 max-w-5xl mx-auto">
+      {toast && (
+        <Toast key={toast.id} message={toast.message} type={toast.type} onClose={() => setToast(null)} />
+      )}
+
       {/* Header */}
       <div className="mb-8 animate-fade-up">
         <h2 className="text-2xl font-bold mb-2">Template Library</h2>
@@ -117,7 +124,11 @@ export default function TemplatesPage() {
 
       {filtered.length === 0 && (
         <div className="text-center py-16 text-[var(--color-text-dim)]">
+          <BookOpen size={48} className="mx-auto mb-4 opacity-20" />
           <p className="text-sm">No templates match your search</p>
+          <p className="text-xs text-[var(--color-text-dim)]/50 mt-1">
+            Try a different keyword or category
+          </p>
         </div>
       )}
     </div>

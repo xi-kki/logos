@@ -1,25 +1,49 @@
-import { Save, Trash2, Copy, Check, ExternalLink } from 'lucide-react';
+import { Save, Trash2, Copy, Check } from 'lucide-react';
 import { useStore } from '../store';
 import { copyToClipboard } from '../lib/optimizer';
 import { useState } from 'react';
+import ConfirmDialog from '../components/ui/ConfirmDialog';
+import Toast from '../components/ui/Toast';
+import EmptyState from '../components/ui/EmptyState';
 
 export default function SavedPage() {
   const { savedPrompts, deletePrompt } = useStore();
   const [copiedId, setCopiedId] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [toast, setToast] = useState(null);
 
   const handleCopy = (text, id) => {
     copyToClipboard(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
+    setToast({ message: 'Copied to clipboard', type: 'success', id: Date.now() });
+  };
+
+  const handleDelete = (id) => {
+    deletePrompt(id);
+    setDeleteTarget(null);
+    setToast({ message: 'Prompt deleted', type: 'success', id: Date.now() });
   };
 
   const formatTime = (iso) => {
-    const d = new Date(iso);
-    return d.toLocaleString();
+    return new Date(iso).toLocaleString();
   };
 
   return (
     <div className="p-6 lg:p-8 max-w-5xl mx-auto">
+      {toast && (
+        <Toast key={toast.id} message={toast.message} type={toast.type} onClose={() => setToast(null)} />
+      )}
+
+      {deleteTarget && (
+        <ConfirmDialog
+          title="Delete Prompt?"
+          message="This will permanently remove this saved prompt."
+          onConfirm={() => handleDelete(deleteTarget)}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
+
       {/* Header */}
       <div className="mb-8 animate-fade-up">
         <h2 className="text-2xl font-bold mb-2">Saved Prompts</h2>
@@ -87,7 +111,7 @@ export default function SavedPage() {
                   )}
                 </button>
                 <button
-                  onClick={() => deletePrompt(prompt.id)}
+                  onClick={() => setDeleteTarget(prompt.id)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium bg-[var(--color-error-dim)] text-[var(--color-error)] hover:opacity-90 transition-opacity"
                 >
                   <Trash2 size={12} />
@@ -98,11 +122,11 @@ export default function SavedPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 text-[var(--color-text-dim)]">
-          <Save size={48} className="mx-auto mb-4 opacity-30" />
-          <p className="text-sm">No saved prompts yet</p>
-          <p className="text-xs mt-1">Save optimized prompts from the editor</p>
-        </div>
+        <EmptyState
+          icon={Save}
+          title="No saved prompts yet"
+          description="Save optimized prompts from the editor"
+        />
       )}
     </div>
   );
