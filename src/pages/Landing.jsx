@@ -15,8 +15,8 @@ function VideoBg() {
       loop
       playsInline
       autoPlay
-      className="absolute opacity-50 object-cover"
-      style={{ width: '115%', height: '115%', top: '-7.5%', left: '-7.5%' }}
+      className="absolute opacity-50 object-cover object-top"
+      style={{ width: '115%', height: '115%', top: 0, left: '50%', transform: 'translateX(-50%)' }}
     />
   );
 }
