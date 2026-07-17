@@ -6,6 +6,47 @@ import { Link } from 'react-router-dom';
 // ─── Video Background ──────────────────────────────────
 function VideoBg() {
   const ref = useRef(null);
+  const opacityRef = useRef(0);
+  const targetOpacity = useRef(0);
+  const rafRef = useRef(null);
+
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+
+    // Start video muted
+    v.volume = 0;
+
+    // Fade in on canplay
+    const handleCanPlay = () => {
+      targetOpacity.current = 0.5;
+      v.play().catch(() => {});
+    };
+
+    v.addEventListener('canplay', handleCanPlay);
+
+    // RAF fade loop
+    const fadeLoop = () => {
+      const current = opacityRef.current;
+      const target = targetOpacity.current;
+      const diff = target - current;
+
+      if (Math.abs(diff) > 0.001) {
+        // Smooth lerp (0.05 = slow fade, 0.1 = medium)
+        opacityRef.current = current + diff * 0.05;
+        v.style.opacity = opacityRef.current;
+      }
+
+      rafRef.current = requestAnimationFrame(fadeLoop);
+    };
+
+    rafRef.current = requestAnimationFrame(fadeLoop);
+
+    return () => {
+      v.removeEventListener('canplay', handleCanPlay);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
 
   return (
     <video
@@ -15,8 +56,8 @@ function VideoBg() {
       loop
       playsInline
       autoPlay
-      className="absolute opacity-50 object-cover object-top"
-      style={{ width: '115%', height: '115%', top: 0, left: '50%', transform: 'translateX(-50%)' }}
+      className="absolute object-cover object-top"
+      style={{ width: '115%', height: '115%', top: 0, left: '50%', transform: 'translateX(-50%)', opacity: 0 }}
     />
   );
 }
