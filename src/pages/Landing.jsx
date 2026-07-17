@@ -10,6 +10,7 @@ function VideoBg() {
   const targetOpacity = useRef(0);
   const rafRef = useRef(null);
   const startTimeRef = useRef(null);
+  const fadingOutRef = useRef(false);
 
   useEffect(() => {
     const v = ref.current;
@@ -28,9 +29,11 @@ function VideoBg() {
     };
 
     const handleTimeUpdate = () => {
+      if (fadingOutRef.current) return; // Prevent re-trigger
       const remaining = v.duration - v.currentTime;
       // Start fade out when 0.55s remain
       if (remaining <= FADE_OUT_TRIGGER && remaining > 0) {
+        fadingOutRef.current = true;
         targetOpacity.current = 0;
         startTimeRef.current = performance.now();
       }
@@ -38,6 +41,7 @@ function VideoBg() {
 
     const handleEnded = () => {
       // Reset and fade back in on loop
+      fadingOutRef.current = false;
       v.currentTime = 0;
       targetOpacity.current = 0.5;
       startTimeRef.current = performance.now();
