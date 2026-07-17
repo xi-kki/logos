@@ -6,34 +6,16 @@ import { Link } from 'react-router-dom';
 // ─── Video Background ──────────────────────────────────
 function VideoBg() {
   const ref = useRef(null);
-  const videoSrc = 'https://stream.mux.com/T6oQJQ02cQ6N01TR6iHwZkKFkbepS34dkkIc9iukgy400g.m3u8';
-
-  useEffect(() => {
-    const v = ref.current;
-    if (!v) return;
-    import('hls.js').then(({ default: Hls }) => {
-      if (Hls.isSupported()) {
-        const hls = new Hls({ enableWorker: false });
-        hls.loadSource(videoSrc);
-        hls.attachMedia(v);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => v.play().catch(() => {}));
-        return () => hls.destroy();
-      }
-    }).catch(() => {
-      if (v.canPlayType('application/vnd.apple.mpegurl')) {
-        v.src = videoSrc;
-      }
-    });
-  }, []);
 
   return (
     <video
       ref={ref}
+      src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260329_050842_be71947f-f16e-4a14-810c-06e83d23ddb5.mp4"
       muted
       loop
       playsInline
+      autoPlay
       className="absolute inset-0 w-full h-full object-cover opacity-50"
-      poster="https://images.unsplash.com/photo-1647356191320-d7a1f80ca777?w=1920&q=80"
     />
   );
 }
