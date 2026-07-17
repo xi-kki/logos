@@ -9,6 +9,7 @@ function VideoBg() {
   const opacityRef = useRef(0);
   const targetOpacity = useRef(0);
   const rafRef = useRef(null);
+  const startTimeRef = useRef(null);
 
   useEffect(() => {
     const v = ref.current;
@@ -17,23 +18,26 @@ function VideoBg() {
     // Start video muted
     v.volume = 0;
 
-    // Fade in on canplay
+    const FADE_DURATION = 250; // ms
+
     const handleCanPlay = () => {
       targetOpacity.current = 0.5;
+      startTimeRef.current = performance.now();
       v.play().catch(() => {});
     };
 
     v.addEventListener('canplay', handleCanPlay);
 
-    // RAF fade loop
-    const fadeLoop = () => {
+    // RAF fade loop (250ms ease-out cubic)
+    const fadeLoop = (timestamp) => {
       const current = opacityRef.current;
       const target = targetOpacity.current;
-      const diff = target - current;
 
-      if (Math.abs(diff) > 0.001) {
-        // Smooth lerp (0.05 = slow fade, 0.1 = medium)
-        opacityRef.current = current + diff * 0.05;
+      if (startTimeRef.current !== null && current < target) {
+        const elapsed = timestamp - startTimeRef.current;
+        const progress = Math.min(elapsed / FADE_DURATION, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        opacityRef.current = target * eased;
         v.style.opacity = opacityRef.current;
       }
 
