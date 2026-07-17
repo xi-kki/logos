@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { Sparkles, BookOpen, History, Save, Menu, X, Wand2, Image, Play } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import LandingPage from './pages/Landing';
 import EditorPage from './pages/Editor';
 import TemplatesPage from './pages/Templates';
 import HistoryPage from './pages/History';
@@ -122,7 +123,8 @@ export default function App() {
           </header>
 
           <Routes>
-            <Route path="/" element={<EditorPage />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/editor" element={<EditorPage />} />
             <Route path="/playground" element={<PlaygroundPage />} />
             <Route path="/reverse" element={<ReverseEngineerPage />} />
             <Route path="/prompt-to-website" element={<PromptToWebsitePage />} />
