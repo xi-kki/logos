@@ -19,6 +19,7 @@ function VideoBg() {
     v.volume = 0;
 
     const FADE_DURATION = 250; // ms
+    const FADE_OUT_TRIGGER = 0.55; // seconds before end
 
     const handleCanPlay = () => {
       targetOpacity.current = 0.5;
@@ -26,18 +27,43 @@ function VideoBg() {
       v.play().catch(() => {});
     };
 
+    const handleTimeUpdate = () => {
+      const remaining = v.duration - v.currentTime;
+      // Start fade out when 0.55s remain
+      if (remaining <= FADE_OUT_TRIGGER && remaining > 0) {
+        targetOpacity.current = 0;
+        startTimeRef.current = performance.now();
+      }
+    };
+
+    const handleEnded = () => {
+      // Reset and fade back in on loop
+      v.currentTime = 0;
+      targetOpacity.current = 0.5;
+      startTimeRef.current = performance.now();
+      v.play().catch(() => {});
+    };
+
     v.addEventListener('canplay', handleCanPlay);
+    v.addEventListener('timeupdate', handleTimeUpdate);
+    v.addEventListener('ended', handleEnded);
 
     // RAF fade loop (250ms ease-out cubic)
     const fadeLoop = (timestamp) => {
       const current = opacityRef.current;
       const target = targetOpacity.current;
 
-      if (startTimeRef.current !== null && current < target) {
+      if (startTimeRef.current !== null) {
         const elapsed = timestamp - startTimeRef.current;
         const progress = Math.min(elapsed / FADE_DURATION, 1);
         const eased = 1 - Math.pow(1 - progress, 3);
-        opacityRef.current = target * eased;
+        
+        // Fade in or out
+        if (target > current) {
+          opacityRef.current = target * eased;
+        } else {
+          opacityRef.current = current * (1 - eased);
+        }
         v.style.opacity = opacityRef.current;
       }
 
@@ -48,6 +74,8 @@ function VideoBg() {
 
     return () => {
       v.removeEventListener('canplay', handleCanPlay);
+      v.removeEventListener('timeupdate', handleTimeUpdate);
+      v.removeEventListener('ended', handleEnded);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
