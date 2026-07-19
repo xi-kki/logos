@@ -23,9 +23,13 @@ function VideoBg() {
     const FADE_OUT_TRIGGER = 0.55; // seconds before end
 
     const handleCanPlay = () => {
+      // Cancel any running fade
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       targetOpacity.current = 0.5;
       startTimeRef.current = performance.now();
       v.play().catch(() => {});
+      // Restart RAF loop
+      rafRef.current = requestAnimationFrame(fadeLoop);
     };
 
     const handleTimeUpdate = () => {
@@ -40,12 +44,25 @@ function VideoBg() {
     };
 
     const handleEnded = () => {
-      // Reset and fade back in on loop
-      fadingOutRef.current = false;
-      v.currentTime = 0;
-      targetOpacity.current = 0.5;
-      startTimeRef.current = performance.now();
-      v.play().catch(() => {});
+      // Cancel any running fade
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      
+      // Set opacity to 0 immediately
+      opacityRef.current = 0;
+      v.style.opacity = 0;
+      
+      // 100ms delay, then reset and fade back in
+      setTimeout(() => {
+        fadingOutRef.current = false;
+        v.currentTime = 0;
+        v.play().catch(() => {});
+        // Start fade in after play begins
+        requestAnimationFrame(() => {
+          targetOpacity.current = 0.5;
+          startTimeRef.current = performance.now();
+          rafRef.current = requestAnimationFrame(fadeLoop);
+        });
+      }, 100);
     };
 
     v.addEventListener('canplay', handleCanPlay);
@@ -57,17 +74,13 @@ function VideoBg() {
       const current = opacityRef.current;
       const target = targetOpacity.current;
 
-      if (startTimeRef.current !== null) {
+      if (startTimeRef.current !== null && Math.abs(target - current) > 0.001) {
         const elapsed = timestamp - startTimeRef.current;
         const progress = Math.min(elapsed / FADE_DURATION, 1);
         const eased = 1 - Math.pow(1 - progress, 3);
         
-        // Fade in or out
-        if (target > current) {
-          opacityRef.current = target * eased;
-        } else {
-          opacityRef.current = current * (1 - eased);
-        }
+        // Resume from current opacity (no snap)
+        opacityRef.current = current + (target - current) * eased;
         v.style.opacity = opacityRef.current;
       }
 
