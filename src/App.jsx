@@ -9,6 +9,7 @@ import SavedPage from './pages/Saved';
 import ReverseEngineerPage from './pages/ReverseEngineer';
 import PromptToWebsitePage from './pages/PromptToWebsite';
 import PlaygroundPage from './pages/Playground';
+import AuthButton from './components/AuthButton';
 
 function Sidebar({ open, onClose }) {
   const links = [
@@ -73,6 +74,9 @@ function Sidebar({ open, onClose }) {
 
         {/* Footer */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-[var(--color-border)]">
+          <div className="mb-4">
+            <AuthButton />
+          </div>
           <div className="text-xs text-[var(--color-text-dim)] text-center">
             v0.2.0 — Phase 2+3
           </div>

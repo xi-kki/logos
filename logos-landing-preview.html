@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logos — AI Prompt Optimizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fustat:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #f8f8f8;
+      --black: #000000;
+      --gray: #505050;
+      --light: #999999;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'Schibsted Grotesk', sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .fade-up { animation: fadeUp 0.6s ease-out forwards; opacity: 0; }
+    .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
+    .scale-in { animation: scaleIn 0.6s ease-out forwards; opacity: 0; }
+    .slide-right { animation: slideRight 0.6s ease-out forwards; opacity: 0; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
+    .delay-6 { animation-delay: 0.6s; }
+    .delay-7 { animation-delay: 0.7s; }
+
+    /* ── Video Background ── */
+    .video-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    .video-bg video {
+      position: absolute;
+      width: 115%;
+      height: 115%;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      object-fit: cover;
+      object-position: top;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .video-bg .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0.6), rgba(255,255,255,0.8));
+    }
+
+    /* ── Navbar ── */
+    nav {
+      position: fixed;
+      top: 0;
+      inset-x: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 120px;
+      background: rgba(248,248,248,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .logo {
+      font-family: 'Schibsted Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -1.44px;
+      color: var(--black);
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.2px;
+    }
+    .nav-links a {
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .nav-links a:hover { color: var(--black); }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      font-size: 14px;
+      transition: all 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .nav-btn.outline {
+      width: 82px;
+      height: 40px;
+      border: 1px solid var(--black);
+      color: var(--black);
+      background: transparent;
+    }
+    .nav-btn.outline:hover { background: rgba(0,0,0,0.05); }
+    .nav-btn.filled {
+      width: 101px;
+      height: 40px;
+      background: var(--black);
+      color: var(--white);
+      font-weight: 600;
+      border: none;
+    }
+    .nav-btn.filled:hover { opacity: 0.9; }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 34px;
+      max-width: 1200px;
+      padding: 0 120px;
+      margin-top: 10px;
+      width: 100%;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 8px;
+      padding: 8px 16px;
+      background: #0e1311;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .badge span {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--white);
+    }
+    .pre-headline {
+      font-family: 'Instrument Serif', serif;
+      font-size: 48px;
+      color: var(--black);
+    }
+    .headline {
+      font-family: 'Fustat', sans-serif;
+      font-size: 80px;
+      font-weight: 700;
+      letter-spacing: -4.8px;
+      line-height: 1;
+      color: var(--black);
+      text-align: center;
+    }
+    .subtitle {
+      font-family: 'Fustat', sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: -0.4px;
+      color: var(--gray);
+      max-width: 542px;
+      text-align: center;
+    }
+
+    /* ── Search Box ── */
+    .search-container {
+      width: 100%;
+      max-width: 728px;
+    }
+    .search-box {
+      background: rgba(0,0,0,0.24);
+      backdrop-filter: blur(12px);
+      border-radius: 18px;
+      height: 200px;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+    }
+    .search-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .credits {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .credits span {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--white);
+    }
+    .upgrade-btn {
+      background: rgba(90,225,76,0.89);
+      color: var(--black);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .upgrade-btn:hover { opacity: 0.9; }
+    .powered {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--white);
+    }
+    .star-icon { color: #3054ff; }
+
+    .search-input-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      margin: 16px 0;
+      padding: 12px 16px;
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .search-input-row input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: 'Fustat', sans-serif;
+      font-size: 16px;
+      color: rgba(0,0,0,0.6);
+    }
+    .search-input-row input::placeholder { color: #ccc; }
+    .search-icon { color: #999; }
+    .send-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--black);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .send-btn:hover { transform: scale(1.1); }
+    .send-btn:active { transform: scale(0.95); }
+
+    .search-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 0;
+    }
+    .action-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7);
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Schibsted Grotesk', sans-serif;
+    }
+    .action-chip:hover { background: rgba(255,255,255,0.15); }
+    .token-count {
+      margin-left: auto;
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* ── Sections ── */
+    section {
+      position: relative;
+      padding: 120px 24px;
+    }
+    .section-inner {
+      max-width: 1152px;
+      margin: 0 auto;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .section-tag {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--gray);
+    }
+    .section-title {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -2.4px;
+      line-height: 1.1;
+    }
+    .section-title span { color: var(--gray); }
+
+    /* ── Feature Cards ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .feature-card {
+      position: relative;
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,0.05);
+      background: var(--white);
+      padding: 24px;
+      transition: all 0.3s;
+      cursor: default;
+    }
+    .feature-card:hover {
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      transform: translateY(-4px);
+    }
+    .feature-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(0,0,0,0.05);
+      margin-bottom: 16px;
+    }
+    .feature-icon svg { color: var(--black); }
+    .feature-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      font-size: 14px;
+      color: rgba(0,0,0,0.5);
+      line-height: 1.6;
+    }
+
+    /* ── Steps ── */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,0.05);
+      background: var(--white);
+      transition: all 0.3s;
+    }
+    .step:hover {
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+      transform: translateX(8px);
+    }
+    .step-num {
+      font-size: 48px;
+      font-weight: 700;
+      color: rgba(0,0,0,0.1);
+      line-height: 1;
+    }
+    .step h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .step p { color: var(--gray); }
+
+    /* ── Models Grid ── */
+    .models-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .model-card {
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.05);
+      background: var(--white);
+      transition: all 0.3s;
+      cursor: default;
+    }
+    .model-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+    .model-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-bottom: 12px;
+    }
+    .model-card p:first-of-type {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .model-card p:last-of-type {
+      font-size: 14px;
+      color: var(--gray);
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+    .cta-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .cta-inner h2 {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -2.4px;
+      margin-bottom: 24px;
+    }
+    .cta-inner > p {
+      color: var(--gray);
+      margin-bottom: 32px;
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 8px 8px 24px;
+      border-radius: 9999px;
+      background: var(--black);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .cta-btn:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
+    .cta-btn .arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      transition: background 0.2s;
+    }
+    .cta-btn:hover .arrow { background: rgba(255,255,255,0.3); }
+    .cta-note {
+      margin-top: 24px;
+      font-size: 14px;
+      color: var(--gray);
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid rgba(0,0,0,0.05);
+      padding: 32px 24px;
+    }
+    .footer-inner {
+      max-width: 1152px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+    .footer-brand svg { animation: spin 8s linear infinite; }
+    footer p { font-size: 14px; color: var(--gray); }
+
+    /* ── Separator ── */
+    .separator {
+      border: none;
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .hero-content { padding: 0 24px; }
+      .headline { font-size: 48px; letter-spacing: -2.4px; }
+      .pre-headline { font-size: 32px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .models-grid { grid-template-columns: repeat(2, 1fr); }
+      .search-box { height: auto; }
+      .section-title { font-size: 32px; }
+    }
+
+    /* ── Scroll Reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease-out;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Navbar ── -->
+  <nav>
+    <a href="#" class="logo">Logos</a>
+    <div class="nav-links">
+      <a href="#features">Features <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></a>
+      <a href="#how">How It Works</a>
+      <a href="#projects">Projects</a>
+      <a href="#community">Community</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div style="display:flex;gap:16px;align-items:center">
+      <a href="#editor" class="nav-btn outline">Sign Up</a>
+      <a href="#editor" class="nav-btn filled">Log In</a>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="video-bg">
+      <video id="heroVideo" muted loop playsinline autoplay
+        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260329_050842_be71947f-f16e-4a14-810c-06e83d23ddb5.mp4">
+      </video>
+      <div class="overlay"></div>
+    </div>
+
+    <div class="hero-content">
+      <!-- Badge -->
+      <div class="badge fade-up">
+        <span>Discover what's possible</span>
+      </div>
+
+      <!-- Pre-headline -->
+      <p class="pre-headline fade-up delay-1">Write a small thing</p>
+
+      <!-- Headline -->
+      <h1 class="headline scale-in delay-2">Transform Data Quickly</h1>
+
+      <!-- Subtitle -->
+      <p class="subtitle fade-in delay-3">Upload your information and get powerful insights right away. Work smarter and achieve goals effortlessly.</p>
+
+      <!-- Search Box -->
+      <div class="search-container fade-up delay-4">
+        <div class="search-box">
+          <!-- Top row -->
+          <div class="search-top">
+            <div class="credits">
+              <span>60/450 credits</span>
+              <button class="upgrade-btn">Upgrade</button>
+            </div>
+            <div class="powered">
+              <svg class="star-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3054ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+                <path d="M20 3v4"/><path d="M22 5h-4"/>
+              </svg>
+              <span>Powered by GPT-4o</span>
+            </div>
+          </div>
+
+          <!-- Input row -->
+          <div class="search-input-row">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+            </svg>
+            <input type="text" id="searchInput" placeholder="Type question..." />
+            <button class="send-btn" id="sendBtn" onclick="handleSend()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 19V5"/><path d="m5 12 7-7 7 7"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Bottom row -->
+          <div class="search-actions">
+            <button class="action-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+              </svg>
+              Attach
+            </button>
+            <button class="action-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>
+              </svg>
+              Voice
+            </button>
+            <button class="action-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+              </svg>
+              Prompts
+            </button>
+            <span class="token-count">0/3,000</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:rgba(255,255,255,0.4)">
+              <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+              <path d="M20 3v4"/><path d="M22 5h-4"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Features ── -->
+  <section id="features">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <p class="section-tag">Features</p>
+        <h2 class="section-title">Everything you need to<br><span>master prompt engineering</span></h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 4 8 8-9.5 9.5a2.12 2.12 0 0 1-3 0L6 16a2.12 2.12 0 0 1 0-3L15 4Z"/>
+              <path d="m12 12 5.5-5.5"/>
+            </svg>
+          </div>
+          <h3>Prompt Optimizer</h3>
+          <p>Input rough prompts, get production-grade outputs. 5 modalities: text, code, image, video, audio.</p>
+        </div>
+        <div class="feature-card reveal" style="animation-delay:0.1s">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
+              <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
+            </svg>
+          </div>
+          <h3>Reverse Engineer</h3>
+          <p>Upload any media — images, audio, video, URLs, code — and extract the prompt behind it.</p>
+        </div>
+        <div class="feature-card reveal" style="animation-delay:0.2s">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+            </svg>
+          </div>
+          <h3>Prompt → Website</h3>
+          <p>Describe what you want, get production-ready HTML, React, or Next.js code. Real AI generation.</p>
+        </div>
+        <div class="feature-card reveal" style="animation-delay:0.3s">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>
+            </svg>
+          </div>
+          <h3>Playground</h3>
+          <p>Test prompts across multiple Groq models. Token counter, cost estimator, variable injection.</p>
+        </div>
+        <div class="feature-card reveal" style="animation-delay:0.4s">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+            </svg>
+          </div>
+          <h3>Image → Prompt</h3>
+          <p>Upload screenshots, get detailed recreation prompts. Powered by Groq Vision.</p>
+        </div>
+        <div class="feature-card reveal" style="animation-delay:0.5s">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>
+            </svg>
+          </div>
+          <h3>Audio → Prompt</h3>
+          <p>Transcribe and analyze audio with Groq Whisper. Extract style, tone, and structure.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="separator">
+
+  <!-- ── How It Works ── -->
+  <section id="how">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <p class="section-tag">How It Works</p>
+        <h2 class="section-title">Three steps to<br><span>perfect prompts</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step reveal">
+          <span class="step-num">01</span>
+          <div>
+            <h3>Write your rough prompt</h3>
+            <p>Don't worry about structure. Just describe what you want — even a sentence works.</p>
+          </div>
+        </div>
+        <div class="step reveal" style="animation-delay:0.15s">
+          <span class="step-num">02</span>
+          <div>
+            <h3>Logos optimizes it</h3>
+            <p>AI analyzes intent, injects structure, adds constraints, and scores the result.</p>
+          </div>
+        </div>
+        <div class="step reveal" style="animation-delay:0.3s">
+          <span class="step-num">03</span>
+          <div>
+            <h3>Use it anywhere</h3>
+            <p>Copy to clipboard, export as JSON/Markdown, or send directly to any platform.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="separator">
+
+  <!-- ── Models ── -->
+  <section id="models">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <p class="section-tag">Models</p>
+        <h2 class="section-title">Powered by<br><span>Groq's fastest inference</span></h2>
+      </div>
+      <div class="models-grid reveal">
+        <div class="model-card">
+          <div class="model-dot" style="background:#3054ff"></div>
+          <p>Llama 3.3</p>
+          <p>70B Versatile</p>
+        </div>
+        <div class="model-card">
+          <div class="model-dot" style="background:#22c55e"></div>
+          <p>Llama 3.1</p>
+          <p>8B Instant</p>
+        </div>
+        <div class="model-card">
+          <div class="model-dot" style="background:#f59e0b"></div>
+          <p>Mixtral</p>
+          <p>8x7B</p>
+        </div>
+        <div class="model-card">
+          <div class="model-dot" style="background:#ec4899"></div>
+          <p>Whisper</p>
+          <p>Large V3</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="separator">
+
+  <!-- ── CTA ── -->
+  <section class="cta-section">
+    <div class="cta-inner reveal">
+      <h2>Ready to optimize?</h2>
+      <p>Start with a rough idea. Leave with a production-grade prompt.</p>
+      <a href="#editor" class="cta-btn">
+        Get Started Free
+        <span class="arrow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 19V5"/><path d="m5 12 7-7 7 7"/>
+          </svg>
+        </span>
+      </a>
+      <p class="cta-note">No signup required. Free tier includes 30 requests/min.</p>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>
+        </svg>
+        Logos
+      </div>
+      <p>Built with Groq AI. Open source.</p>
+    </div>
+  </footer>
+
+  <!-- ── JavaScript ── -->
+  <script>
+    // ── Video fade logic ──
+    const video = document.getElementById('heroVideo');
+    if (video) {
+      video.volume = 0;
+      video.addEventListener('canplay', () => {
+        video.style.opacity = 0.5;
+        video.play().catch(() => {});
+      });
+      video.addEventListener('timeupdate', () => {
+        const remaining = video.duration - video.currentTime;
+        if (remaining <= 0.55 && remaining > 0) {
+          video.style.opacity = 0;
+        }
+      });
+      video.addEventListener('ended', () => {
+        video.style.opacity = 0;
+        setTimeout(() => {
+          video.currentTime = 0;
+          video.play().catch(() => {});
+          video.style.opacity = 0.5;
+        }, 100);
+      });
+    }
+
+    // ── Scroll reveal ──
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    revealElements.forEach(el => revealObserver.observe(el));
+
+    // ── Smooth scroll for nav links ──
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // ── Search interaction ──
+    const searchInput = document.getElementById('searchInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const tokenCount = document.querySelector('.token-count');
+
+    searchInput.addEventListener('input', (e) => {
+      const len = e.target.value.length;
+      tokenCount.textContent = `${len}/3,000`;
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && searchInput.value.trim()) {
+        handleSend();
+      }
+    });
+
+    function handleSend() {
+      const val = searchInput.value.trim();
+      if (!val) return;
+      
+      sendBtn.style.transform = 'scale(0.85)';
+      setTimeout(() => {
+        sendBtn.style.transform = 'scale(1)';
+        alert(`Optimizing: "${val}"\n\nThis is a preview. Connect to the Logos API to see real results.`);
+      }, 150);
+    }
+
+    // ── Upgrade button pulse on hover ──
+    const upgradeBtn = document.querySelector('.upgrade-btn');
+    upgradeBtn.addEventListener('mouseenter', () => {
+      upgradeBtn.style.animation = 'pulse 0.6s ease-in-out';
+    });
+    upgradeBtn.addEventListener('animationend', () => {
+      upgradeBtn.style.animation = '';
+    });
+
+    // ── Parallax on hero ──
+    window.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      const hero = document.querySelector('.hero-content');
+      if (hero && scrolled < window.innerHeight) {
+        hero.style.transform = `translateY(${scrolled * 0.15}px)`;
+        hero.style.opacity = 1 - (scrolled / window.innerHeight) * 0.5;
+      }
+    });
+  </script>
+</body>
+</html>
